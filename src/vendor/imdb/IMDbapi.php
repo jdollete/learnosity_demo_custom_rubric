@@ -1,12 +1,12 @@
 <?php
 class IMDbapi {
     public $result = array('status'=>'false','message'=>'Unknown error');
-    private $api_key = '';
+    private $api_key = 'Vh54D1Kl02SjOJ6Y3VxhjTzTHYJxLr';
     private $url = 'http://imdbapi.net/api';
 
     public function __construct($api = false)
     {
-        $this->api_key = $api;
+            $this->api_key = $api;
     }
 
     public function get($id = false,$type = 'json')
