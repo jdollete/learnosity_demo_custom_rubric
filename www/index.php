@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include_once('../config.php');
 include_once('../movieFetcher.php');
@@ -18,7 +18,9 @@ include_once('../movieFetcher.php');
   	 ?>
   	 <img src=<?php echo $randomMovieInfo->poster; ?>></img>
   	 <h1><?php echo $randomMovieInfo->title;?></h1>
+
+
+     <script src=<?php echo $url_questions ?>></script>
   </body>
 
-  <script src=<?php echo $url_questions ?>></script>
 </html>
