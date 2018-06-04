@@ -36,7 +36,7 @@
         // "instant_feedback"
       ],
       "configuration" => [
-        "onsubmit_redirect_url" => 'feedback.php?session_id='. $session_id
+        "onsubmit_redirect_url" => 'teacher_feedback.php?session_id='. $session_id
       ],
       "navigation" => [
         "show_intro" => true
