@@ -68,7 +68,7 @@
             $.each(questions, function(index, element) {
               if(element.metadata.rubric_reference !== undefined) {
                 var itemId = element.response_id + '_' + element.metadata.rubric_reference;
-                $('<span class="learnosity-item" data-reference="' + itemId + '">')
+                $('<span class="learnosity-item item-rubric" data-reference="' + itemId + '">')
                   .appendTo($('#' + element.response_id).closest('.row'))
                   .wrap('<div class="col-md-6"></div>');
                 itemReferences.push({
