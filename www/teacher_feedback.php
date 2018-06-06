@@ -48,6 +48,7 @@
       <div class="row">
         <div class="col-md-10"></div>
         <div class="col-md-2 pull-right">
+          <div class="total-score-container"></div>
           <span class="learnosity-save-button"></span>
         </div>
       </div>
@@ -56,6 +57,41 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src='<?php echo $url_reports; ?>'></script>
     <script type="text/javascript">
+
+      function getSum(total, num) {
+          return total + num;
+      }
+
+      // Iterates through all the choices when a selection is changed
+      var onRubricChange = function() {
+        $( 'div.item-rubric tbody tr' ).on('change', function(e) {
+          e.preventDefault();
+
+          var $scoreContainer = $( 'div.total-score-container' )[0];
+          var $selectedScore = $( 'div.item-rubric tbody tr td.lrn_selected' );
+          var $maxPoints = $( 'div.item-rubric tbody tr' ).length * 5;
+          var scoreArray = [];
+          var totalPoints;
+          var totalPointsRatio;
+          var totalScoreElement;
+
+          if ( $( 'div.score-value' ) != 0) {
+            $( 'div.score-value' ).remove();
+          };
+
+          $.each($selectedScore, function(index, value) {
+            scoreArray.push(parseInt(this.attributes[1].nodeValue) + 1);
+          });
+
+          totalPoints = scoreArray.reduce(getSum);
+          totalPointsRatio = totalPoints + '/' + $maxPoints;
+          totalScoreElement = $("<div />", { class: "score-value", text: totalPointsRatio })
+
+          $scoreContainer.append(totalScoreElement[0]);
+
+        });
+      };
+
       var init = function() {
         var itemReferences = [];
         var report1 = reportsApp.getReport('report-1');
@@ -68,6 +104,7 @@
             $.each(questions, function(index, element) {
               if(element.metadata.rubric_reference !== undefined) {
                 var itemId = element.response_id + '_' + element.metadata.rubric_reference;
+                // Added 'item-rubric' as a class for easier targeting
                 $('<span class="learnosity-item item-rubric" data-reference="' + itemId + '">')
                   .appendTo($('#' + element.response_id).closest('.row'))
                   .wrap('<div class="col-md-6"></div>');
@@ -76,8 +113,10 @@
                   'reference' : element.metadata.rubric_reference
                 });
               }
+              onRubricChange();
             });
           });
+
           var itemsActivity = {
             'domain': location.hostname,
             'request': {
@@ -94,17 +133,20 @@
               }
             }
           };
+
           $.post('endpoint.php', itemsActivity, function(data, status) {
             itemsApp = LearnosityItems.init(data, {
               readyListener: function() {
+                onRubricChange();
                 $('.lrn_save_button').click(function() {
                   window.setTimeout(function() {
-                    window.location = 'macmillan_demo_feedback.php?session_id=<?php echo $_GET['session_id']; ?>&feedback_session_id=' + itemsActivity.request.session_id;
+                    window.location = 'feedback.php?session_id=<?php echo $_GET['session_id']; ?>&feedback_session_id=' + itemsActivity.request.session_id;
                   }, 2000);
                 });
               }
             });
           });
+
         });
       };
 
