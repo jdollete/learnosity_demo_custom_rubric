@@ -48,7 +48,6 @@
       <div class="row">
         <div class="col-md-10"></div>
         <div class="col-md-2 pull-right">
-          <div class="total-score-container"></div>
           <span class="learnosity-save-button"></span>
         </div>
       </div>
@@ -62,35 +61,45 @@
           return total + num;
       }
 
-      // Iterates through all the choices when a selection is changed
-      var onRubricChange = function() {
-        $( 'div.item-rubric tbody tr' ).on('change', function(e) {
-          e.preventDefault();
 
-          var $scoreContainer = $( 'div.total-score-container' )[0];
-          var $selectedScore = $( 'div.item-rubric tbody tr td.lrn_selected' );
-          var $maxPoints = $( 'div.item-rubric tbody tr' ).length * 5;
-          var scoreArray = [];
+      var calculateRubricScore = function() {
+        var responses = [];
+        var $rubricContainers = $( 'div.item-rubric' );
+        var index = 0;
+
+        $.each($rubricContainers, function(index, value) {
+          var $responseId = $($($($($($( this )).closest('.lrn-item-processed')).parent().parent())[0]).find('.lrn_widget')[index]).attr('id');
+          var $selectedScores = $(this).find(".lrn_selected");
+          var max_score = $(this).find('.lrn_option').length
+          var rubricScores = {};
+          var currentRubricScores = [];
           var totalPoints;
-          var totalPointsRatio;
-          var totalScoreElement;
 
-          if ( $( 'div.score-value' ) != 0) {
-            $( 'div.score-value' ).remove();
-          };
+          console.log($responseId);
 
-          $.each($selectedScore, function(index, value) {
-            scoreArray.push(parseInt(this.attributes[1].nodeValue) + 1);
+          $.each($selectedScores, function(index, value) {
+            currentRubricScores.push(parseInt(this.attributes[1].nodeValue) + 1);
           });
 
-          totalPoints = scoreArray.reduce(getSum);
-          totalPointsRatio = totalPoints + '/' + $maxPoints;
-          totalScoreElement = $("<div />", { class: "score-value", text: totalPointsRatio })
+          // totalPoints = rubricScores.push(currentRubricScores.reduce(getSum) + '/' + max_score);
+          totalPoints = currentRubricScores.reduce(getSum);
+          // rubricScores[$responseId] = currentRubricScores.reduce(getSum) + '/' + max_score;
 
-          $scoreContainer.append(totalScoreElement[0]);
+          responses.push({
+            'response_id': $responseId,
+            'score': totalPoints,
+            'max_score': max_score
+          });
 
+          index += 1;
         });
+
+        postScores(responses);
       };
+
+      var postScores = function(responses) {
+        console.log(responses);
+      }
 
       var init = function() {
         var itemReferences = [];
@@ -113,7 +122,6 @@
                   'reference' : element.metadata.rubric_reference
                 });
               }
-              onRubricChange();
             });
           });
 
@@ -137,7 +145,6 @@
           $.post('endpoint.php', itemsActivity, function(data, status) {
             itemsApp = LearnosityItems.init(data, {
               readyListener: function() {
-                onRubricChange();
                 $('.lrn_save_button').click(function() {
                   window.setTimeout(function() {
                     window.location = 'feedback.php?session_id=<?php echo $_GET['session_id']; ?>&feedback_session_id=' + itemsActivity.request.session_id;
