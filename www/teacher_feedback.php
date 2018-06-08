@@ -68,22 +68,18 @@
         var index = 0;
 
         $.each($rubricContainers, function(index, value) {
-          var $responseId = $($($($($($( this )).closest('.lrn-item-processed')).parent().parent())[0]).find('.lrn_widget')[index]).attr('id');
+          var $responseId = $($($($($($( this )).closest('.lrn-item-processed')).parent().parent())[0]).find('.lrn_widget')[0]).attr('id');
           var $selectedScores = $(this).find(".lrn_selected");
           var max_score = $(this).find('.lrn_option').length
           var rubricScores = {};
           var currentRubricScores = [];
           var totalPoints;
 
-          console.log($responseId);
-
           $.each($selectedScores, function(index, value) {
             currentRubricScores.push(parseInt(this.attributes[1].nodeValue) + 1);
           });
 
-          // totalPoints = rubricScores.push(currentRubricScores.reduce(getSum) + '/' + max_score);
           totalPoints = currentRubricScores.reduce(getSum);
-          // rubricScores[$responseId] = currentRubricScores.reduce(getSum) + '/' + max_score;
 
           responses.push({
             'response_id': $responseId,
@@ -98,7 +94,7 @@
       };
 
       var postScores = function(responses) {
-        console.log(responses);
+
       }
 
       var init = function() {
