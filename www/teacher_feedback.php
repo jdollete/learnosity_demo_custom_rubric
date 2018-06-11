@@ -61,7 +61,7 @@
           return total + num;
       };
 
-      var calculateRubricScore = function() {
+      var calculateRubricScore = function(itemsActivity) {
         var responses = [];
         var $rubricContainers = $( 'div.item-rubric' );
         var index = 0;
@@ -89,10 +89,10 @@
           index += 1;
         });
 
-        postScores(responses);
+        postScores(responses, itemsActivity);
       };
 
-      var postScores = function(responses) {
+      var postScores = function(responses, itemsActivity) {
         var endpoint = '<?php echo $url_data; ?>/latest/sessions/responses/scores';
         var request = {
           'sessions': [
@@ -110,19 +110,15 @@
             dataType: 'json',
             type: 'POST'
         })
-        .error(function(xhr, status, data) {
+        .fail(function(xhr, status, data) {
             console.log(xhr.responseText, null, null);
         })
-        .success(function(data, status, xhr) {
-          // The only reason we wait 7 seconds _after_ the Data API update is due to a latency
+        .done(function(data, status, xhr) {
+          // The only reason we wait # seconds _after_ the Data API update is due to a latency
           // retrieving responses that have been immediately set/updated
-          window.itemsAppTeacherScoring.save({
-            "success" : function() {
-              window.setTimeout(function () {
-                window.location = './feedback_report.php?session_id=<?php echo $session_id; ?>&activity_id=<?php echo $activity_id; ?>';
-              }, 7000);
-            }
-          });
+          window.setTimeout(function () {
+            window.location = './feedback_results.php?session_id=<?php echo $session_id; ?>&feedback_session_id=' + itemsActivity.request.session_id;
+          }, 2000);
         });
       }
 
@@ -171,10 +167,7 @@
             itemsApp = LearnosityItems.init(data, {
               readyListener: function() {
                 $('.lrn_save_button').click(function() {
-                  calculateRubricScore();
-                  if(responses!==[]){
-                    postScores(responses);
-                  }
+                  calculateRubricScore(itemsActivity);
                 });
               }
             });
@@ -188,10 +181,6 @@
 
       reportsApp = LearnosityReports.init(<?php echo $signedRequest; ?>, eventOptions);
     </script>
-
-    <script type="text/javascript">
-
-</script>
 
     <style type="text/css">
       .lrn .row {
