@@ -64,6 +64,26 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="<?php echo $url_reports; ?>"></script>
   <script>
+    var appendOverAllScores = function() {
+      var endpoint = '<?php echo $url_data; ?>/sessions/responses/scores';
+      var request = {
+            'session_id': [<?php echo $session_id; ?>],
+          };
+
+      $.ajax({
+          url: '/xhr.php',
+          data: {'request': JSON.stringify(request), 'endpoint': endpoint},
+          dataType: 'json',
+          type: 'POST'
+      })
+      .fail(function(xhr, status, data) {
+          console.log(xhr.responseText, null, null);
+      })
+      .done(function(data, status, xhr) {
+        console.log(data);
+      });
+    };
+
     var init = function() {
       var itemReferences = [];
       var report1 = reportsApp.getReport('report-1');
@@ -85,7 +105,7 @@
                 }
               });
             });
-            console.log(itemReferences);
+
             var itemsActivity = {
               'domain': location.hostname,
               'request': {
@@ -100,7 +120,6 @@
               }
             };
             $.post("endpoint.php", itemsActivity, function(data, status) {
-              console.log("endpoint response", data);
               itemsApp = LearnosityItems.init(data);
             });
           });
