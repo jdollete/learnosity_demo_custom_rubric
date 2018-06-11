@@ -170,11 +170,9 @@
           $.post('endpoint.php', itemsActivity, function(data, status) {
             itemsApp = LearnosityItems.init(data, {
               readyListener: function() {
-                //var responses = [];
                 $('.lrn_save_button').click(function() {
                   calculateRubricScore();
                   if(responses!==[]){
-                    console.log(responses);
                    postScores(responses);
                   }
                 });
