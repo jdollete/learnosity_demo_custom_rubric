@@ -191,6 +191,9 @@
       .learnosity-report h3 {
         font-weight: 400;
       }
+      .lrn-circle {
+        display: none;
+      }
     </style>
 
   </body>

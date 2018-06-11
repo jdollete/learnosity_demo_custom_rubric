@@ -85,7 +85,7 @@
                 }
               });
             });
-            console.log(itemReferences);
+
             var itemsActivity = {
               'domain': location.hostname,
               'request': {
@@ -100,7 +100,6 @@
               }
             };
             $.post("endpoint.php", itemsActivity, function(data, status) {
-              console.log("endpoint response", data);
               itemsApp = LearnosityItems.init(data);
             });
           });
