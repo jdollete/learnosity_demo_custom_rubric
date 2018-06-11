@@ -57,10 +57,9 @@
     <script src='<?php echo $url_reports; ?>'></script>
     <script type="text/javascript">
 
-      function getSum(total, num) {
+      var getSum = function(total, num) {
           return total + num;
-      }
-
+      };
 
       var calculateRubricScore = function() {
         var responses = [];
@@ -94,36 +93,37 @@
       };
 
       var postScores = function(responses) {
+        var endpoint = '<?php echo $url_data; ?>/latest/sessions/responses/scores';
         var request = {
-        'sessions': [
+          'sessions': [
             {
-                'session_id': '<?php echo $session_id; ?>',
-                'user_id': '<?php echo $studentid; ?>',
-                'responses': responses
+              'session_id': '<?php echo $session_id; ?>',
+              'user_id': '<?php echo $studentid; ?>',
+              'responses': responses
             }
-        ]
-    };
-    var endpoint = '<?php echo $url_data; ?>/latest/sessions/responses/scores';
-    $.ajax({
-        url: '/xhr.php',
-        data: {'request': JSON.stringify(request), 'endpoint': endpoint, 'action': 'update'},
-        dataType: 'json',
-        type: 'POST'
-    })
-    .error(function(xhr, status, data) {
-        console.log(xhr.responseText, null, null);
-    })
-    .success(function(data, status, xhr) {
-        // The only reason we wait 7 seconds _after_ the Data API update is due to a latency
-        // retrieving responses that have been immediately set/updated
-        window.itemsAppTeacherScoring.save({
+          ]
+        };
+
+        $.ajax({
+            url: '/xhr.php',
+            data: {'request': JSON.stringify(request), 'endpoint': endpoint, 'action': 'update'},
+            dataType: 'json',
+            type: 'POST'
+        })
+        .error(function(xhr, status, data) {
+            console.log(xhr.responseText, null, null);
+        })
+        .success(function(data, status, xhr) {
+          // The only reason we wait 7 seconds _after_ the Data API update is due to a latency
+          // retrieving responses that have been immediately set/updated
+          window.itemsAppTeacherScoring.save({
             "success" : function() {
-                window.setTimeout(function () {
-                    window.location = './feedback_report.php?session_id=<?php echo $session_id; ?>&activity_id=<?php echo $activity_id; ?>';
-                }, 7000);
+              window.setTimeout(function () {
+                window.location = './feedback_report.php?session_id=<?php echo $session_id; ?>&activity_id=<?php echo $activity_id; ?>';
+              }, 7000);
             }
+          });
         });
-    });
       }
 
       var init = function() {
@@ -173,13 +173,12 @@
                 $('.lrn_save_button').click(function() {
                   calculateRubricScore();
                   if(responses!==[]){
-                   postScores(responses);
+                    postScores(responses);
                   }
                 });
               }
             });
           });
-
         });
       };
 
@@ -191,7 +190,7 @@
     </script>
 
     <script type="text/javascript">
-      
+
 </script>
 
     <style type="text/css">
