@@ -67,8 +67,8 @@
     var appendOverAllScores = function() {
       var endpoint = '<?php echo $url_data; ?>/sessions/responses/scores';
       var request = {
-            'session_id': [<?php echo $session_id; ?>],
-          };
+        'session_id': ['<?php echo $session_id; ?>'],
+      };
 
       $.ajax({
           url: '/xhr.php',
@@ -81,6 +81,7 @@
       })
       .done(function(data, status, xhr) {
         console.log(data);
+        console.log("Data API Complete");
       });
     };
 
@@ -120,7 +121,12 @@
               }
             };
             $.post("endpoint.php", itemsActivity, function(data, status) {
-              itemsApp = LearnosityItems.init(data);
+              itemsApp = LearnosityItems.init(data, {
+                readyListener: function() {
+                  appendOverAllScores();
+                }
+              });
+
             });
           });
     };

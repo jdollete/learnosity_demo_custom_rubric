@@ -62,38 +62,39 @@
       };
 
       var calculateRubricScore = function(itemsActivity) {
+        var $items = $( 'div.item-container' );
         var responses = [];
         var $rubricContainers = $( 'div.item-rubric' );
-        var index = 0;
 
-        $.each($rubricContainers, function(index, value) {
-          var $responseId = $($($($($($( this )).closest('.lrn-item-processed')).parent().parent())[0]).find('.lrn_widget')[0]).attr('id');
-          var $selectedScores = $(this).find(".lrn_selected");
-          var max_score = $(this).find('.lrn_option').length
-          var rubricScores = {};
-          var currentRubricScores = [];
-          var totalPoints;
+        $.each($items, function(index, value) {
+          var $responseId = $($( this )[0]).children()[0].firstChild.id;
 
-          $.each($selectedScores, function(index, value) {
-            currentRubricScores.push(parseInt(this.attributes[1].nodeValue) + 1);
-          });
+          if ( $(this).find('.item-rubric').length != 0 ) {
+            var $selectedScores = $(this).find("div.item-rubric .lrn_selected");
+            var max_score = $(this).find('.lrn_option').length;
+            var rubricScores = {};
+            var currentRubricScores = [];
+            var totalPoints;
+            $.each($selectedScores, function(index, value) {
+              currentRubricScores.push(parseInt(this.attributes[1].nodeValue) + 1);
+            });
 
-          totalPoints = currentRubricScores.reduce(getSum);
+            totalPoints = currentRubricScores.reduce(getSum);
 
-          responses.push({
-            'response_id': $responseId,
-            'score': totalPoints,
-            'max_score': max_score
-          });
-
-          index += 1;
+            responses.push({
+              'response_id': $responseId,
+              'score': totalPoints,
+              'max_score': max_score
+            });
+          }
         });
 
         postScores(responses, itemsActivity);
       };
 
       var postScores = function(responses, itemsActivity) {
-        var endpoint = '<?php echo $url_data; ?>/latest/sessions/responses/scores';
+        console.log(responses);
+        var endpoint = '<?php echo $url_data; ?>/sessions/responses/scores';
         var request = {
           'sessions': [
             {
@@ -118,7 +119,7 @@
           // retrieving responses that have been immediately set/updated
           window.setTimeout(function () {
             window.location = './feedback_results.php?session_id=<?php echo $session_id; ?>&feedback_session_id=' + itemsActivity.request.session_id;
-          }, 2000);
+          }, 4000);
         });
       }
 
@@ -129,7 +130,7 @@
         report1.on('ready:itemsApi', function(itemsApp) {
           // Build the 2 columns, left is Reports API (student in review) and the right is Items API
           // for the teacher to add feedback.
-          $('.lrn_widget').wrap('<div class="row"></div>').wrap('<div class="col-md-6"></div>');
+          $('.lrn_widget').wrap('<div class="row item-container"></div>').wrap('<div class="col-md-6"></div>');
           itemsApp.getQuestions(function(questions) {
             $.each(questions, function(index, element) {
               if(element.metadata.rubric_reference !== undefined) {
