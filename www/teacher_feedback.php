@@ -64,7 +64,6 @@
       var calculateRubricScore = function(itemsActivity) {
         var $items = $( 'div.item-container' );
         var responses = [];
-        var $rubricContainers = $( 'div.item-rubric' );
 
         $.each($items, function(index, value) {
           var $responseId = $($( this )[0]).children()[0].firstChild.id;
@@ -93,7 +92,6 @@
       };
 
       var postScores = function(responses, itemsActivity) {
-        console.log(responses);
         var endpoint = '<?php echo $url_data; ?>/sessions/responses/scores';
         var request = {
           'sessions': [
@@ -130,6 +128,7 @@
         report1.on('ready:itemsApi', function(itemsApp) {
           // Build the 2 columns, left is Reports API (student in review) and the right is Items API
           // for the teacher to add feedback.
+          // Added class item-container for easier targeting
           $('.lrn_widget').wrap('<div class="row item-container"></div>').wrap('<div class="col-md-6"></div>');
           itemsApp.getQuestions(function(questions) {
             $.each(questions, function(index, element) {
